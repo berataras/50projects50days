@@ -1,49 +1,42 @@
-const progress = document.getElementById('progress')
-const prev = document.getElementById('prev')
-const next = document.getElementById('next')
-const circles = document.querySelectorAll('.circle')
+const nextButton = document.getElementById('next');
+const prevButton = document.getElementById('prev');
 
-let currentActive = 1
+const circles = document.querySelectorAll('.circle');
+const progress = document.getElementById('progress');
 
-next.addEventListener('click', () => {
-    currentActive++
+let order = 0;
+let progressWidth = 0;
 
-    if(currentActive > circles.length) {
-        currentActive = circles.length
-    }
+nextButton.addEventListener('click', () => {
+    console.log(`order: ${order} circles length: ${circles.length - 2}`);
+    order++;
+    progressWidth += 30;
+    moveSteps();
+    isDisable();
+});
 
-    update()
-})
+prevButton.addEventListener('click', () => {
+    order--;
+    progressWidth -= 30;
+    moveSteps();
+    isDisable();
+});
 
-prev.addEventListener('click', () => {
-    currentActive--
+function moveSteps(){
+    let currentCircle = circles[order];
 
-    if(currentActive < 1) {
-        currentActive = 1
-    }
+    progress.style.width = `${progressWidth}%`;
 
-    update()
-})
-
-function update() {
-    circles.forEach((circle, idx) => {
-        if(idx < currentActive) {
-            circle.classList.add('active')
-        } else {
-            circle.classList.remove('active')
+    circles.forEach((circle, index) => {
+        if(index > order){
+            circle.classList.remove('active');
+        }else{
+            currentCircle.classList.add('active');
         }
     })
+}
 
-    const actives = document.querySelectorAll('.active')
-
-    progress.style.width = (actives.length - 1) / (circles.length - 1) * 100 + '%'
-
-    if(currentActive === 1) {
-        prev.disabled = true
-    } else if(currentActive === circles.length) {
-        next.disabled = true
-    } else {
-        prev.disabled = false
-        next.disabled = false
-    }
+function isDisable(){
+    order !== circles.length - 1 ? nextButton.disabled = false : nextButton.disabled = true;
+    order > 0 ? prevButton.disabled = false : prevButton.disabled = true;
 }
